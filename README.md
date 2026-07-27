@@ -1,2 +1,92 @@
 # proto-specs
-prototype application SPECs to allow for cleanroom implementations...
+
+Prototype application specifications, published for cleanroom implementation.
+
+## What this is
+
+Each subdirectory contains a `SPEC.md` for a small web app that was
+originally designed and built in a private repo. Instead of open-sourcing
+the code, this repo open-sources the **specification** — a document precise
+enough that someone who has never seen the original implementation (human
+or AI) can build a functionally and architecturally faithful version from
+the document alone.
+
+## Why specs instead of code
+
+The original implementations stay private, but the *design* behind them —
+the data model, the API contract, the concurrency guarantees, the exact
+validation rules — is genuinely useful to share: as a portfolio artifact,
+as a teaching example of what an unambiguous spec looks like, and as a
+reproducible benchmark for how well an AI coding agent can turn a spec into
+working software with zero access to a reference implementation. Publishing
+the spec gets all of that without exposing a single line of the private
+source.
+
+This only works if the spec is actually complete. Each `SPEC.md` is written
+to be **implementation-derivable**:
+
+- Anywhere behavior matters, it's pinned down exactly — status codes, field
+  names, validation predicates, rate limits, error shapes.
+- Anywhere only visual/cosmetic intent matters, it says so explicitly and
+  leaves the specifics to the implementer, rather than leaving it
+  ambiguous by omission.
+- Hard platform constraints (e.g. no WebSockets, no client-side router, no
+  frontend build step) are called out separately from product behavior, so
+  an implementation can't accidentally satisfy the "what" while ignoring
+  the "how."
+- An acceptance checklist at the end of each spec doubles as the test plan
+  — every item is meant to become a real, automated, re-runnable test.
+
+The bet is: if a spec is unambiguous enough, a capable engineer — or a
+capable model — should be able to produce a working, behaviorally faithful
+app from it in one pass, without ever seeing the private original.
+
+## Results so far
+
+Both specs in this repo have been used to drive a real cleanroom build:
+Claude Sonnet 5, given only the `SPEC.md` and no access to the original
+implementation, produced a fully working app on the first attempt for both
+the [planning poker tool](poker/SPEC.md) and the [retro board tool](retro/SPEC.md).
+
+## How to use these specs
+
+1. Pick a spec (e.g. `poker/SPEC.md`) and drop it into a fresh, empty
+   project directory — no other context from this repo is needed or
+   should be used.
+2. Hand it to a coding agent (or a human engineer) with instructions to
+   treat it as the sole source of truth — see the example prompt below.
+3. Verify the result against the spec's acceptance checklist (§10 in
+   both specs).
+
+### Example cleanroom-build prompt
+
+```
+You are building an application strictly from the specification in
+SPEC.md in this directory. Do not search for, reference, or assume
+knowledge of any existing/reference implementation of this app —
+treat SPEC.md as if it is the only thing anyone has ever written about
+this system.
+
+Rules:
+- Everything the spec states as a hard requirement (status codes, field
+  names, validation predicates, limits, concurrency guarantees) must be
+  implemented exactly, not approximately.
+- Anywhere the spec explicitly leaves a detail to implementer's
+  judgment, make a reasonable choice yourself — do not stop to ask.
+- Build a complete, deployable application, and implement the spec's
+  acceptance checklist as real, automated, independently re-runnable
+  tests against a real backing store (not mocked).
+- When you're done, list anything you had to make a judgment call on
+  that the spec didn't fully pin down.
+
+Build it end to end: backend, frontend, and tests.
+```
+
+## Repo structure
+
+- `poker/SPEC.md` — a no-signup, real-time planning poker estimation tool.
+- `retro/SPEC.md` — a no-signup, real-time team retro board tool.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
