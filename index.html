@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>proto-specs</title>
+</head>
+<body>
+<style>
+:root {
+  --bg: #f4f6f9;
+  --bg-grid-dot: #c7d0da;
+  --panel: #ffffff;
+  --panel-alt: #eef1f5;
+  --border: #d7dee6;
+  --text: #1a212b;
+  --text-muted: #5c6b7a;
+  --accent: #5a6fd8;
+  --accent-soft: #5a6fd81a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #10141b;
+    --bg-grid-dot: #232c38;
+    --panel: #171d26;
+    --panel-alt: #1d2530;
+    --border: #2e3948;
+    --text: #e8ecf1;
+    --text-muted: #8a97a8;
+    --accent: #8f9dff;
+    --accent-soft: #8f9dff22;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-image: radial-gradient(var(--bg-grid-dot) 1px, transparent 1px);
+  background-size: 22px 22px;
+  -webkit-font-smoothing: antialiased;
+}
+
+code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 72px 24px 96px;
+}
+
+.kicker {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 10px;
+}
+
+h1 {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0 0 14px;
+  text-wrap: balance;
+}
+
+.dek {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 62ch;
+  margin: 0 0 40px;
+}
+
+.dek a { color: var(--accent); }
+
+.projects {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.project {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+}
+
+.project h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 6px;
+}
+
+.project p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0 0 14px;
+}
+
+.links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.links a {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12.5px;
+  text-decoration: none;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 5px 10px;
+}
+
+.links a:hover { opacity: 0.8; }
+
+footer {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+footer a { color: var(--accent); }
+</style>
+
+<div class="page">
+  <p class="kicker">proto-specs</p>
+  <h1>Prototype application specifications</h1>
+  <p class="dek">Each project below was originally designed and built in a private repo. Instead of open-sourcing the code, this repo open-sources the <strong>specification</strong> — precise enough that a coding agent with no access to the original implementation can build a functionally faithful version from the document alone. See the <a href="https://github.com/eswat2/proto-specs">README</a> for the full methodology and results.</p>
+
+  <div class="projects">
+    <article class="project">
+      <h2>Planning poker</h2>
+      <p>A free, no-signup planning poker room — real-time voting synced over Server-Sent Events and Redis pub/sub.</p>
+      <div class="links">
+        <a href="https://github.com/eswat2/proto-specs/blob/main/poker/SPEC.md">SPEC.md</a>
+        <a href="poker/architecture.html">architecture</a>
+      </div>
+    </article>
+
+    <article class="project">
+      <h2>Team retro board</h2>
+      <p>A free, no-signup team retro board — real-time card sync over Server-Sent Events and Redis pub/sub.</p>
+      <div class="links">
+        <a href="https://github.com/eswat2/proto-specs/blob/main/retro/SPEC.md">SPEC.md</a>
+        <a href="retro/architecture.html">architecture</a>
+      </div>
+    </article>
+  </div>
+
+  <footer>
+    Source on <a href="https://github.com/eswat2/proto-specs">GitHub</a>. <code>architecture.html</code> pages document the private reference implementations for browsing — not for cleanroom builds.
+  </footer>
+</div>
+
+</body>
+</html>
