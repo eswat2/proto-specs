@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>proto-retro — System Architecture</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+<body>
+<style>
+:root {
+  --bg: #f4f6f9;
+  --bg-grid-dot: #c7d0da;
+  --panel: #ffffff;
+  --panel-alt: #eef1f5;
+  --border: #d7dee6;
+  --text: #1a212b;
+  --text-muted: #5c6b7a;
+  --accent: #5a6fd8;
+  --accent-soft: #5a6fd81a;
+  --flow: #2f8f86;
+  --flow-soft: #2f8f8617;
+  --code-bg: #eceff3;
+
+  --tag-id-h: 220; --tag-id-s: 55%; --tag-id-l: 42%;
+  --tag-columns-h: 265; --tag-columns-s: 45%; --tag-columns-l: 46%;
+  --tag-cards-h: 35; --tag-cards-s: 65%; --tag-cards-l: 40%;
+  --tag-revealed-h: 340; --tag-revealed-s: 50%; --tag-revealed-l: 44%;
+  --tag-participants-h: 165; --tag-participants-s: 40%; --tag-participants-l: 34%;
+  --tag-updated-h: 205; --tag-updated-s: 15%; --tag-updated-l: 42%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #10141b;
+    --bg-grid-dot: #232c38;
+    --panel: #171d26;
+    --panel-alt: #1d2530;
+    --border: #2e3948;
+    --text: #e8ecf1;
+    --text-muted: #8a97a8;
+    --accent: #8f9dff;
+    --accent-soft: #8f9dff22;
+    --flow: #5fb3ac;
+    --flow-soft: #5fb3ac1f;
+    --code-bg: #10151d;
+
+    --tag-id-l: 66%;
+    --tag-columns-l: 70%;
+    --tag-cards-l: 62%;
+    --tag-revealed-l: 68%;
+    --tag-participants-l: 58%;
+    --tag-updated-l: 68%;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #10141b;
+  --bg-grid-dot: #232c38;
+  --panel: #171d26;
+  --panel-alt: #1d2530;
+  --border: #2e3948;
+  --text: #e8ecf1;
+  --text-muted: #8a97a8;
+  --accent: #8f9dff;
+  --accent-soft: #8f9dff22;
+  --flow: #5fb3ac;
+  --flow-soft: #5fb3ac1f;
+  --code-bg: #10151d;
+
+  --tag-id-l: 66%;
+  --tag-columns-l: 70%;
+  --tag-cards-l: 62%;
+  --tag-revealed-l: 68%;
+  --tag-participants-l: 58%;
+  --tag-updated-l: 68%;
+}
+
+:root[data-theme="light"] {
+  --bg: #f4f6f9;
+  --bg-grid-dot: #c7d0da;
+  --panel: #ffffff;
+  --panel-alt: #eef1f5;
+  --border: #d7dee6;
+  --text: #1a212b;
+  --text-muted: #5c6b7a;
+  --accent: #5a6fd8;
+  --accent-soft: #5a6fd81a;
+  --flow: #2f8f86;
+  --flow-soft: #2f8f8617;
+  --code-bg: #eceff3;
+
+  --tag-id-l: 42%;
+  --tag-columns-l: 46%;
+  --tag-cards-l: 40%;
+  --tag-revealed-l: 44%;
+  --tag-participants-l: 34%;
+  --tag-updated-l: 42%;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-image: radial-gradient(var(--bg-grid-dot) 1px, transparent 1px);
+  background-size: 22px 22px;
+  -webkit-font-smoothing: antialiased;
+}
+
+code, .mono {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+.page {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 56px 24px 72px;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+  text-align: left;
+  margin-bottom: 40px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-text { max-width: 62ch; }
+
+.config-badge {
+  flex-shrink: 0;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 12px 16px;
+  min-width: 240px;
+}
+
+.config-badge .cb-title {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 0 0 8px;
+}
+
+.config-badge dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 10px;
+  row-gap: 4px;
+  font-size: 11px;
+}
+
+.config-badge dt {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.config-badge dd {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.kicker {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 10px;
+}
+
+h1 {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0 0 12px;
+  text-wrap: balance;
+}
+
+.dek {
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: 62ch;
+  margin: 0;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.layer {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 18px;
+}
+
+.layer-rail {
+  display: flex;
+  justify-content: center;
+  padding-top: 22px;
+}
+
+.layer-rail span {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  writing-mode: vertical-rl;
+  letter-spacing: 0.08em;
+}
+
+.layer-body {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 22px 24px 26px;
+}
+
+.layer-body > h2 {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 16px;
+}
+
+.card-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.card {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 14px 16px;
+}
+
+.card h3 {
+  font-size: 14.5px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: var(--text);
+}
+
+.card .meta {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11.5px;
+  color: var(--accent);
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.card p:not(.meta) {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.card code {
+  font-size: 12px;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--text);
+}
+
+.connector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0 10px 40px;
+  margin-left: 20px;
+}
+
+.connector::before {
+  content: "";
+  width: 1px;
+  height: 22px;
+  background: var(--flow);
+}
+
+.connector span {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  color: var(--flow);
+  background: var(--flow-soft);
+  border: 1px solid var(--flow);
+  border-radius: 3px;
+  padding: 2px 7px;
+  letter-spacing: 0.03em;
+}
+
+.connector::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid var(--flow);
+  border-bottom: 2px solid var(--flow);
+  transform: rotate(45deg);
+  margin-top: -4px;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.split-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.split-col .col-label {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--flow);
+  text-transform: uppercase;
+  margin: 0 0 2px;
+}
+
+.route-group {
+  margin-bottom: 10px;
+}
+
+.route-group .group-label {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin: 0 0 5px;
+}
+
+.route-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.route {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 3px 8px;
+  color: var(--text);
+}
+
+.mount-row {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.mount-row .col-label { margin: 0; }
+
+.fn-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.fn-group .group-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 8px;
+}
+
+.fn-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.fn-list code {
+  font-size: 12.5px;
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.fn-note {
+  font-size: 11px;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.layer-note {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  --h: 0; --s: 0%; --l: 40%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 108px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid hsl(var(--h) var(--s) var(--l) / 0.5);
+  background: hsl(var(--h) var(--s) var(--l) / 0.12);
+}
+
+.chip .chip-name {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: hsl(var(--h) var(--s) var(--l));
+}
+
+.chip .chip-desc {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.chip.id { --h: var(--tag-id-h); --s: var(--tag-id-s); --l: var(--tag-id-l); }
+.chip.columns { --h: var(--tag-columns-h); --s: var(--tag-columns-s); --l: var(--tag-columns-l); }
+.chip.cards { --h: var(--tag-cards-h); --s: var(--tag-cards-s); --l: var(--tag-cards-l); }
+.chip.revealed { --h: var(--tag-revealed-h); --s: var(--tag-revealed-s); --l: var(--tag-revealed-l); }
+.chip.participants { --h: var(--tag-participants-h); --s: var(--tag-participants-s); --l: var(--tag-participants-l); }
+.chip.updated { --h: var(--tag-updated-h); --s: var(--tag-updated-s); --l: var(--tag-updated-l); }
+
+.data-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+}
+
+.data-flow-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.data-flow-inner .arrow {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  color: var(--accent);
+  font-size: 18px;
+}
+
+.data-flow-inner span.label {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 10px;
+  color: var(--accent);
+  text-align: center;
+  line-height: 1.4;
+}
+
+footer.note {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+footer.note code { font-size: 11.5px; }
+
+@media (max-width: 640px) {
+  .layer { grid-template-columns: 1fr; }
+  .layer-rail { display: none; }
+  .connector { margin-left: 0; padding-left: 0; }
+}
+</style>
+
+<div class="page">
+  <header class="hero">
+    <div class="hero-text">
+      <p class="kicker">proto-retro</p>
+      <h1>System Architecture</h1>
+      <p class="dek">A free, no-signup team retro board — real-time card sync over Server-Sent Events and Redis pub/sub. No WebSockets, no third-party realtime vendor, no accounts.</p>
+    </div>
+    <div class="config-badge">
+      <p class="cb-title">board defaults — api/_lib/board.js</p>
+      <dl>
+        <dt>board id</dt><dd>→ adjective-noun-### slug</dd>
+        <dt>TTL</dt><dd>→ 4h inactivity, refreshed per write</dd>
+        <dt>columns</dt><dd>→ went-well, to-improve, action-items</dd>
+        <dt>dev port</dt><dd>→ :3211 (vercel dev)</dd>
+      </dl>
+    </div>
+  </header>
+
+  <main class="stack">
+
+    <section class="layer">
+      <div class="layer-rail"><span>L1 · CLIENT</span></div>
+      <div class="layer-body">
+        <h2>Web Components — public/components/</h2>
+        <div class="card-row">
+          <article class="card">
+            <h3>pr-app</h3>
+            <p class="meta">router</p>
+            <p>Reads <code>location.pathname</code> once on load, decides landing vs. board. Navigation is a real <code>location.href</code> change, not client-side routing.</p>
+          </article>
+          <article class="card">
+            <h3>pr-landing</h3>
+            <p class="meta">create &amp; join</p>
+            <p>Posts to <code>/api/boards</code> or <code>/api/boards/:id/join</code>, caches identity in <code>localStorage</code> keyed per board.</p>
+          </article>
+          <article class="card">
+            <h3>pr-board</h3>
+            <p class="meta">everything else</p>
+            <p>Owns the <code>EventSource</code> connection, participant strip, the 3 fixed columns, add-card forms, card lists, delete affordance, and the reveal control — one component by design.</p>
+          </article>
+        </div>
+        <p class="layer-note" style="margin-top:14px;">No framework, no build step — plain <code>.js</code> loaded as native ES modules. Shared styling is CSS custom properties on <code>:root</code>, consumed through each component's Shadow DOM. Pre-reveal, another participant's card renders as a face-down <code>.card-back</code> placeholder — the DOM node exists, its text just isn't rendered.</p>
+      </div>
+    </section>
+
+    <div class="connector flow"><span>POST / DELETE / SSE</span></div>
+
+    <section class="layer">
+      <div class="layer-rail"><span>L2 · DEPLOYMENT</span></div>
+      <div class="layer-body">
+        <h2>Vercel</h2>
+        <div class="card-row">
+          <article class="card">
+            <h3>Local</h3>
+            <p class="meta">vercel dev · :3211</p>
+            <p><code>pnpm run dev:up</code> starts local Redis (<code>:6379</code>) + <code>vercel dev</code> together, idempotent by port. Port <code>3211</code> (not <code>3210</code>) so it can run alongside a local <code>proto-poker</code> dev server.</p>
+          </article>
+          <article class="card">
+            <h3>Production</h3>
+            <p class="meta">Vercel</p>
+            <p>Deployed on Vercel. Pushes to <code>main</code> auto-deploy via the connected GitHub repo.</p>
+          </article>
+        </div>
+        <p class="layer-note" style="margin-top:14px;">Same handlers either way — deployment only changes which Redis instance <code>REDIS_URL</code> points at. Production shares its Upstash Redis instance with <code>proto-poker</code>; keys are namespaced (<code>board:*</code> vs <code>room:*</code>) so the two apps never collide.</p>
+      </div>
+    </section>
+
+    <div class="connector flow"><span>routes</span></div>
+
+    <section class="layer">
+      <div class="layer-rail"><span>L3 · API</span></div>
+      <div class="layer-body">
+        <h2>/api/boards — plain Vercel Functions, Node.js runtime</h2>
+        <div class="split">
+          <div class="split-col">
+            <p class="col-label">Board lifecycle</p>
+            <div class="route-group">
+              <p class="group-label">Create &amp; join</p>
+              <div class="route-list">
+                <span class="route">POST /api/boards</span><span class="route">GET /api/boards/:id</span><span class="route">POST /api/boards/:id/join</span>
+              </div>
+            </div>
+            <div class="route-group">
+              <p class="group-label">Cards &amp; reveal</p>
+              <div class="route-list">
+                <span class="route">POST .../cards</span><span class="route">DELETE .../cards/:cardId</span><span class="route">POST .../reveal</span>
+              </div>
+            </div>
+          </div>
+          <div class="split-col">
+            <p class="col-label">Realtime</p>
+            <div class="route-group">
+              <p class="group-label">Push — one per open browser</p>
+              <div class="route-list">
+                <span class="route">GET /api/boards/:id/stream</span>
+              </div>
+            </div>
+            <div class="route-group">
+              <p class="group-label">Discovery — for LLMs &amp; agents, not the app itself</p>
+              <div class="route-list">
+                <span class="route">/llms.txt</span><span class="route">/manifest.json</span><span class="route">/architecture</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="layer-note" style="margin-top:16px;"><code>stream.js</code> is the one route pinned to the Node.js runtime (not Edge) — holding a live Redis <code>SUBSCRIBE</code> needs a raw TCP socket, which Edge can't do. The discovery files are static (no function behind them) — the SPA's raw HTML is nearly empty until JS runs, so they exist to give something with actual content to fetch.</p>
+        <p class="layer-note" style="margin-top:10px;"><code>cards/[cardId].js</code> uses <code>DELETE</code>, not <code>POST</code> — the one deliberate divergence from an all-<code>POST</code> mutation convention, since a card (unlike any poker action) has real per-entity identity you're addressing by id.</p>
+        <p class="layer-note" style="margin-top:10px;">Every mutation route (add card, delete card, reveal, plus join) carries <code>participantId</code> and is rate-limited on two keys — <code>participantId</code>+board and source IP+board — failing closed with <code>429</code> + <code>Retry-After</code> if either is over. The IP layer exists because <code>participantId</code> is self-issued and never authenticated: a script can mint a fresh one per request for free, so it alone isn't a real defense.</p>
+      </div>
+    </section>
+
+    <div class="connector flow"><span>calls</span></div>
+
+    <section class="layer">
+      <div class="layer-rail"><span>L4 · CORE</span></div>
+      <div class="layer-body">
+        <h2>api/_lib/ — board.js, redis.js &amp; rateLimit.js</h2>
+        <div class="fn-groups">
+          <div class="fn-group">
+            <p class="group-label">Board mutations</p>
+            <ul class="fn-list">
+              <li><code>createBoard()</code></li>
+              <li><code>joinBoard()</code></li>
+              <li><code>addCard()</code></li>
+              <li><code>deleteCard()</code></li>
+              <li><code>revealBoard()</code></li>
+            </ul>
+          </div>
+          <div class="fn-group">
+            <p class="group-label">Concurrency safety</p>
+            <ul class="fn-list">
+              <li><code>mutateBoard()</code> <span class="fn-note">retry loop</span></li>
+              <li><code>casSet</code> <span class="fn-note">— Lua compare-and-swap</span></li>
+              <li><span class="fn-note">jittered backoff on conflict</span></li>
+            </ul>
+          </div>
+          <div class="fn-group">
+            <p class="group-label">Redis connection roles</p>
+            <ul class="fn-list">
+              <li><code>getClient()</code></li>
+              <li><code>getPublisher()</code></li>
+              <li><code>createSubscriber()</code></li>
+            </ul>
+          </div>
+          <div class="fn-group">
+            <p class="group-label">Rate limiting</p>
+            <ul class="fn-list">
+              <li><code>enforceRateLimits()</code> <span class="fn-note">— fails closed on first key over</span></li>
+              <li><code>checkRateLimit()</code> <span class="fn-note">— fixed window, INCR+EXPIRE</span></li>
+              <li><code>getClientIp()</code></li>
+            </ul>
+          </div>
+        </div>
+        <p class="layer-note">Every mutation goes through <code>mutateBoard()</code> — the only place that also publishes, and the only place that retries a lost compare-and-swap. Skip it and clients silently desync or lose a card under contention. <code>cardId</code> is generated outside the retried callback (like poker's <code>participantId</code>) so it stays identical across every retry attempt instead of regenerating and orphaning a card on a contended write. <code>deleteCard()</code> collapses "no such card" and "wrong author" into one generic rejection.</p>
+      </div>
+    </section>
+
+    <div class="connector flow"><span>reads / writes</span></div>
+
+    <section class="layer">
+      <div class="layer-rail"><span>L5 · DATA</span></div>
+      <div class="layer-body">
+        <h2>Upstash Redis</h2>
+        <div class="split" style="grid-template-columns: 1fr auto 1fr; align-items: center;">
+          <div class="split-col">
+            <p class="col-label">board:{id} — state (JSON blob)</p>
+            <div class="chip-row">
+              <div class="chip id"><span class="chip-name">id</span><span class="chip-desc">slug</span></div>
+              <div class="chip columns"><span class="chip-name">columns</span><span class="chip-desc">fixed, 3</span></div>
+              <div class="chip cards"><span class="chip-name">cards</span><span class="chip-desc">id → card</span></div>
+              <div class="chip revealed"><span class="chip-name">revealed</span><span class="chip-desc">boolean</span></div>
+              <div class="chip participants"><span class="chip-name">participants</span><span class="chip-desc">name only</span></div>
+              <div class="chip updated"><span class="chip-name">updatedAt</span><span class="chip-desc">ms timestamp</span></div>
+            </div>
+          </div>
+          <div class="data-flow">
+            <div class="data-flow-inner">
+              <span class="arrow">&#8594;</span>
+              <span class="label">PUBLISH<br>on every write</span>
+            </div>
+          </div>
+          <div class="split-col">
+            <p class="col-label">board:{id}:events — channel</p>
+            <div class="chip-row">
+              <div class="chip id"><span class="chip-name">SUBSCRIBE</span><span class="chip-desc">×N open browsers</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="layer-note" style="margin-top:14px;">Board keys carry a 4h TTL, refreshed on every write — no accounts means no owner to explicitly delete a board, so inactivity is what cleans things up. Card visibility (hidden until revealed) is a client-side render rule only — every card's real <code>text</code> is in the broadcast state at all times; <code>pr-board</code> just chooses not to render it pre-reveal.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="note">
+    Reflects <code>api/_lib/board.js</code>, <code>api/_lib/redis.js</code>, <code>api/boards/[boardId]/stream.js</code>, and <code>public/components/</code> as of 2026-07-25. Verify against source before relying on specifics.
+  </footer>
+</div>
+
+</body>
+</html>

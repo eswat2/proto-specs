@@ -31,7 +31,7 @@ Both specs in this repo have been used to drive a real cleanroom build. Claude S
 
 ## How to use these specs
 
-1. Pick a spec (e.g. `poker/SPEC.md`) and drop it into a fresh, empty project directory — no other context from this repo is needed or should be used.
+1. Pick a spec (e.g. `poker/SPEC.md`) and drop it into a fresh, empty project directory — no other context from this repo is needed or should be used. In particular, don't hand a coding agent the corresponding `architecture.html` — it documents the private reference implementation's actual file/function names and would bias a "cleanroom" build away from being cleanroom.
 2. Hand it to a coding agent (or a human engineer) with instructions to treat it as the sole source of truth — see the example prompt below.
 3. Verify the result against the spec’s acceptance checklist (§10 in both documents).
 
@@ -63,6 +63,8 @@ Build it end to end: backend, frontend, and tests.
 
 - [`poker/SPEC.md`](poker/SPEC.md) — a no-signup, real-time planning poker estimation tool.
 - [`retro/SPEC.md`](retro/SPEC.md) — a no-signup, real-time team retro board tool.
+
+Each directory also has an `architecture.html` — a human-readable map of the *private* reference implementation (file layout, function names, data flow), published for browsing, not for feeding to a coding agent. See the cleanroom-build caveat above.
 
 Additional specs will be added here as they are written.
 
