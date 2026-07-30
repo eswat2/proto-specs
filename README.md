@@ -70,6 +70,10 @@ Each directory also has an `architecture.html` — a human-readable map of the *
 
 Additional specs will be added here as they are written.
 
+## Cross-model validation
+
+As a second, independent test of the specs, both `SPEC.md` files were dropped into blank project folders and handed to Grok 4.5 with no other context. Grok built both apps, tests included, in roughly 10 minutes each. Both ran as expected, with only minor differences from the original apps in layout and styling — evidence that the specs are precise enough to reproduce faithful, working implementations across different model providers, not just Claude.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
