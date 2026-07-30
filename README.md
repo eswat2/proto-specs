@@ -2,6 +2,8 @@
 
 Prototype application specifications, published for cleanroom implementation.
 
+**Live site:** [eswat2.github.io/proto-specs](https://eswat2.github.io/proto-specs/)
+
 ## What this is
 
 Each subdirectory contains a `SPEC.md` for a small web app that was originally designed and built in a private repo. Instead of open-sourcing the code, this repo open-sources the **specification** — a document precise enough that someone who has never seen the original implementation (human or AI) can build a functionally and architecturally faithful version from the document alone.
