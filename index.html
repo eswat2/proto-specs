@@ -141,6 +141,63 @@ footer {
 }
 
 footer a { color: var(--accent); }
+
+footer .meta {
+  margin: 0 0 16px;
+  line-height: 1.55;
+}
+
+/* Soft aside — footnote weight, not a third project card */
+.mcp-card {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 12px 14px 12px 16px;
+}
+
+.mcp-card .label {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 4px;
+}
+
+.mcp-card p {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.mcp-card p:last-child { margin-bottom: 0; }
+
+.mcp-card a { color: var(--accent); }
+
+.mcp-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mcp-tags a {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  text-decoration: none;
+  color: var(--text-muted);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 10px;
+}
+
+.mcp-tags a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
 </style>
 
 <div class="page">
@@ -169,9 +226,17 @@ footer a { color: var(--accent); }
   </div>
 
   <footer>
-    Source on <a href="https://github.com/eswat2/proto-specs">GitHub</a>. <code>architecture.html</code> pages document the private reference implementations for browsing — not for cleanroom builds.
-    <br><br>
-    🔗 Curious who built these? <a href="https://eswat2-mcp.vercel.app">eswat2-mcp</a> (<a href="https://eswat2-mcp.vercel.app/wiki">wiki</a>) is a personal MCP + REST server exposing my bio, career, and projects.
+    <p class="meta">Source on <a href="https://github.com/eswat2/proto-specs">GitHub</a>. <code>architecture.html</code> pages document the private reference implementations for browsing — not for cleanroom builds.</p>
+    <aside class="mcp-card" aria-label="Author MCP reference">
+      <p class="label">Author</p>
+      <p>Curious who built these? <a href="https://eswat2-mcp.vercel.app">eswat2-mcp</a> is a personal MCP + REST server exposing bio, career, and projects.</p>
+      <div class="mcp-tags">
+        <a href="https://eswat2-mcp.vercel.app/wiki">wiki</a>
+        <a href="https://eswat2-mcp.vercel.app/kb-graph">kb-graph</a>
+        <a href="https://eswat2-mcp.vercel.app/3d-graph">3d-graph</a>
+        <a href="https://eswat2-mcp.vercel.app/architecture">architecture</a>
+      </div>
+    </aside>
   </footer>
 </div>
 
