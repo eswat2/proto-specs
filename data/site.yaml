@@ -1,0 +1,61 @@
+# The content of the site. Edit this, then run `python3 build.py` -- index.html
+# is generated from this file plus template.html and must not be hand-edited.
+#
+# Prose fields (dek, footer.meta, footer.author.text) accept three inline forms
+# and nothing else: **bold**, `code`, and [text](url). Everything else is escaped
+# and shows up literally. All other fields are plain text.
+
+meta:
+  repo: eswat2/proto-specs
+  kicker: proto-specs
+  # doc_title is the browser tab. Omit it and the kicker is used, so the tab and
+  # the page cannot drift apart.
+  doc_title: proto-specs
+  title: Prototype application specifications
+  description: >-
+    Open-source prototype application specifications — precise enough that a
+    coding agent with no access to the original code can build a functionally
+    faithful version from the document alone.
+  dek: >-
+    Each project below was originally designed and built in a private repo.
+    Instead of open-sourcing the code, this repo open-sources the
+    **specification** — precise enough that a coding agent with no access to the
+    original implementation can build a functionally faithful version from the
+    document alone. See the [README](https://github.com/eswat2/proto-specs) for
+    the full methodology and results.
+
+# Each project's two links are derived from its slug: the SPEC.md on GitHub under
+# meta.repo, and the local architecture.html. A project that does not fit that
+# shape can carry an explicit `links: [{label, href}, ...]` instead.
+projects:
+  - slug: poker
+    title: Planning poker
+    blurb: >-
+      A free, no-signup planning poker room — real-time voting synced over
+      Server-Sent Events and Redis pub/sub.
+
+  - slug: retro
+    title: Team retro board
+    blurb: >-
+      A free, no-signup team retro board — real-time card sync over Server-Sent
+      Events and Redis pub/sub.
+
+footer:
+  meta: >-
+    Source on [GitHub](https://github.com/eswat2/proto-specs).
+    `architecture.html` pages document the private reference implementations for
+    browsing — not for cleanroom builds.
+  author:
+    aria: Author MCP reference
+    label: Author
+    text: >-
+      Curious who built these? [eswat2-mcp](https://eswat2-mcp.vercel.app) is a
+      personal MCP + REST server exposing bio, career, and projects.
+    # Tags are paths under base; the tag name is both the path and the label.
+    base: https://eswat2-mcp.vercel.app
+    tags:
+      - about
+      - wiki
+      - kb-graph
+      - 3d-graph
+      - architecture

@@ -10,6 +10,11 @@ Prototype application specifications, published for cleanroom implementation.
 Neither runs a build step; both just serve the repo root as-is, so nothing here is
 host-specific — no `vercel.json`, no workflow, no config.
 
+The landing page is generated, not hand-written: `index.html` is compiled from
+`data/site.yaml` plus `template.html` by `python3 build.py` (PyYAML is the only
+dependency) and committed, since the hosts serve the repo root as-is. Edit the YAML
+and rerun the build — never edit `index.html` directly. See `CLAUDE.md` for details.
+
 ## What this is
 
 Each subdirectory contains a `SPEC.md` for a small web app that was originally designed and built in a private repo. Instead of open-sourcing the code, this repo open-sources the **specification** — a document precise enough that someone who has never seen the original implementation (human or AI) can build a functionally and architecturally faithful version from the document alone.
