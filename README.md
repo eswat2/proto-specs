@@ -2,7 +2,13 @@
 
 Prototype application specifications, published for cleanroom implementation.
 
-**Live site:** [eswat2.github.io/proto-specs](https://eswat2.github.io/proto-specs/)
+**Live site**, served from the root of `main` on two hosts, both rebuilt from the same commit on push:
+
+- <https://proto-specs.vercel.app/> — Vercel
+- <https://eswat2.github.io/proto-specs/> — GitHub Pages
+
+Neither runs a build step; both just serve the repo root as-is, so nothing here is
+host-specific — no `vercel.json`, no workflow, no config.
 
 ## What this is
 
