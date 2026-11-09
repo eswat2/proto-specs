@@ -49,10 +49,10 @@ footer:
     aria: Author MCP reference
     label: Author
     text: >-
-      Curious who built these? [eswat2-mcp](https://eswat2-mcp.vercel.app) is a
+      Curious who built these? [eswat2-mcp](https://mcp.eswat2.app) is a
       personal MCP + REST server exposing bio, career, and projects.
     # Tags are paths under base; the tag name is both the path and the label.
-    base: https://eswat2-mcp.vercel.app
+    base: https://mcp.eswat2.app
     tags:
       - about
       - wiki
